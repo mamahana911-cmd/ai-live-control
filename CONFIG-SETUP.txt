@@ -1,0 +1,15 @@
+AI LIVE CONTROL - CONFIG SETUP
+
+Edit config.js before deploying:
+
+window.APP_CONFIG = {
+  appName: "AI LIVE CONTROL",
+  supabaseUrl: "https://YOUR_PROJECT_REF.supabase.co",
+  supabaseAnonKey: "sb_publishable_YOUR_KEY"
+};
+
+Use ONLY the Supabase Publishable Key in this frontend.
+NEVER put a Supabase Secret Key in this file or in GitHub.
+
+Project URL: Supabase > Data API
+Publishable Key: Supabase > Settings > API Keys
