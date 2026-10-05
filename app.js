@@ -217,9 +217,7 @@ async function loadUsers() {
         return;
     }
 
-
     userList.innerHTML = "";
-
 
     data.forEach(user => {
 
@@ -253,14 +251,35 @@ async function loadUsers() {
             document.createElement("span");
 
         plan.textContent =
-            "Paket: " + (user.plan || "free");
+            "Paket: " +
+            (user.plan || "free").toUpperCase();
+
+
+        const expired =
+            document.createElement("span");
+
+        if (user.expired_at) {
+
+            const date =
+                new Date(user.expired_at);
+
+            expired.textContent =
+                "Berlaku sampai: " +
+                date.toLocaleDateString(
+                    "id-ID"
+                );
+
+        } else {
+
+            expired.textContent =
+                "Masa berlaku: Tidak terbatas";
+        }
 
 
         info.appendChild(name);
-
         info.appendChild(email);
-
         info.appendChild(plan);
+        info.appendChild(expired);
 
 
         const actions =
@@ -286,6 +305,24 @@ async function loadUsers() {
                 : "NONAKTIF";
 
 
+        const edit =
+            document.createElement("button");
+
+        edit.className =
+            "user-toggle";
+
+        edit.textContent =
+            "Edit";
+
+        edit.style.background =
+            "#394565";
+
+        edit.addEventListener(
+            "click",
+            () => editUser(user)
+        );
+
+
         const toggle =
             document.createElement("button");
 
@@ -305,18 +342,153 @@ async function loadUsers() {
 
 
         actions.appendChild(status);
-
+        actions.appendChild(edit);
         actions.appendChild(toggle);
 
 
         item.appendChild(info);
-
         item.appendChild(actions);
 
 
         userList.appendChild(item);
 
     });
+}
+async function editUser(user) {
+
+    const currentName =
+        user.name || "";
+
+    const currentPlan =
+        user.plan || "free";
+
+    const currentExpired =
+        user.expired_at
+            ? new Date(user.expired_at)
+                .toISOString()
+                .split("T")[0]
+            : "";
+
+
+    const name =
+        prompt(
+            "Nama user:",
+            currentName
+        );
+
+    if (name === null) {
+        return;
+    }
+
+
+    const plan =
+        prompt(
+            "Paket user:\n\nFREE\nPRO\nPREMIUM",
+            currentPlan.toUpperCase()
+        );
+
+    if (plan === null) {
+        return;
+    }
+
+
+    const normalizedPlan =
+        plan.trim().toLowerCase();
+
+
+    if (
+        ![
+            "free",
+            "pro",
+            "premium"
+        ].includes(normalizedPlan)
+    ) {
+
+        alert(
+            "Paket tidak valid.\nGunakan FREE, PRO, atau PREMIUM."
+        );
+
+        return;
+    }
+
+
+    const expiredInput =
+        prompt(
+            "Tanggal kedaluwarsa:\n\n" +
+            "Format: YYYY-MM-DD\n" +
+            "Kosongkan jika tidak terbatas.",
+            currentExpired
+        );
+
+    if (expiredInput === null) {
+        return;
+    }
+
+
+    let expiredAt = null;
+
+
+    if (expiredInput.trim() !== "") {
+
+        const date =
+            new Date(
+                expiredInput.trim() +
+                "T23:59:59"
+            );
+
+        if (isNaN(date.getTime())) {
+
+            alert(
+                "Format tanggal tidak valid."
+            );
+
+            return;
+        }
+
+        expiredAt =
+            date.toISOString();
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+                name:
+                    name.trim() || "User",
+
+                plan:
+                    normalizedPlan,
+
+                expired_at:
+                    expiredAt,
+
+                updated_at:
+                    new Date().toISOString()
+            })
+            .eq("id", user.id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Gagal menyimpan perubahan user."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "Data user berhasil diperbarui."
+    );
+
+
+    await loadUsers();
+
+    await loadAdminStats();
 }
 
 
