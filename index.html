@@ -108,20 +108,96 @@
 
                 <div class="admin-menu">
 
-                    <button>
-                        👥 Kelola User
-                    </button>
+    <button id="manageUsersButton">
+        👥 Kelola User
+    </button>
 
-                    <button>
-                        💳 Paket & Langganan
-                    </button>
+    <button id="plansButton">
+        💳 Paket & Langganan
+    </button>
 
-                    <button>
-                        ⚙️ Pengaturan Sistem
-                    </button>
+    <button id="settingsButton">
+        ⚙️ Pengaturan Sistem
+    </button>
 
-                </div>
+</div>
 
+<div id="userManagement" class="management-section hidden">
+
+    <div class="management-header">
+        <div>
+            <h3>👥 Kelola User</h3>
+            <p>Daftar pengguna AI LIVE CONTROL</p>
+        </div>
+
+        <button id="closeUserManagement">
+            Tutup
+        </button>
+    </div>
+
+    <div id="userList">
+        <div class="loading-user">
+            Memuat user...
+        </div>
+    </div>
+
+</div>
+
+<div id="plansSection" class="management-section hidden">
+
+    <div class="management-header">
+        <div>
+            <h3>💳 Paket & Langganan</h3>
+            <p>Pengaturan paket pengguna</p>
+        </div>
+
+        <button id="closePlans">
+            Tutup
+        </button>
+    </div>
+
+    <div class="plan-grid">
+
+        <div class="plan-card">
+            <h3>FREE</h3>
+            <p>Paket dasar</p>
+        </div>
+
+        <div class="plan-card">
+            <h3>PRO</h3>
+            <p>Paket premium</p>
+        </div>
+
+        <div class="plan-card">
+            <h3>PREMIUM</h3>
+            <p>Paket lengkap</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="settingsSection" class="management-section hidden">
+
+    <div class="management-header">
+        <div>
+            <h3>⚙️ Pengaturan Sistem</h3>
+            <p>Pengaturan utama AI LIVE CONTROL</p>
+        </div>
+
+        <button id="closeSettings">
+            Tutup
+        </button>
+    </div>
+
+    <div class="system-info">
+        <p><strong>Platform:</strong> AI LIVE CONTROL</p>
+        <p><strong>Authentication:</strong> Supabase</p>
+        <p><strong>Hosting:</strong> GitHub Pages</p>
+        <p><strong>Status:</strong> Online</p>
+    </div>
+
+</div>
             </section>
 
 
