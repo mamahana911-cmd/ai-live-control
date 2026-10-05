@@ -1,5 +1,5 @@
-const SUPABASE_URL = "MASUKKAN_PROJECT_URL_ANDA";
-const SUPABASE_PUBLISHABLE_KEY = "MASUKKAN_PUBLISHABLE_KEY_ANDA";
+const SUPABASE_URL = "https://alwrrvltxdbnzrquchsh.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Oz_Mi93xZbUF7fDRLB6r_g_Lanr0Bci";
 
 const { createClient } = supabase;
 
