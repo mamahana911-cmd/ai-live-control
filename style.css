@@ -467,4 +467,110 @@ button {
     .plan-grid {
         grid-template-columns: 1fr;
     }
+.management-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-user-button {
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #6c5ce7;
+    color: white;
+    cursor: pointer;
+}
+
+.add-user-button:hover {
+    opacity: 0.9;
+}
+
+.add-user-form {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #151c32;
+    border: 1px solid #283452;
+}
+
+.add-user-form h3 {
+    margin-bottom: 18px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #cbd2e8;
+    font-size: 13px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #394565;
+    border-radius: 8px;
+    background: #0d1428;
+    color: white;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #6c5ce7;
+}
+
+.add-user-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.add-user-actions button {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.create-user-button {
+    background: #6c5ce7;
+    color: white;
+}
+
+#cancelAddUser {
+    background: #283452;
+    color: white;
+}
+
+#addUserMessage {
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+
+    .management-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .management-actions button {
+        width: 100%;
+    }
+
+    .add-user-actions {
+        flex-direction: column;
+    }
+
+    .add-user-actions button {
+        width: 100%;
+    }
 }
