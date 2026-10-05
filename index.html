@@ -125,15 +125,79 @@
 <div id="userManagement" class="management-section hidden">
 
     <div class="management-header">
-        <div>
-            <h3>👥 Kelola User</h3>
-            <p>Daftar pengguna AI LIVE CONTROL</p>
-        </div>
+    <div>
+        <h3>👥 Kelola User</h3>
+        <p>Daftar pengguna AI LIVE CONTROL</p>
+    </div>
+
+    <div class="management-actions">
+
+        <button id="addUserButton" class="add-user-button">
+            + Tambah User
+        </button>
 
         <button id="closeUserManagement">
             Tutup
         </button>
+
     </div>
+</div>
+    <div id="addUserForm" class="add-user-form hidden">
+
+    <h3>➕ Tambah User</h3>
+
+    <div class="form-group">
+        <label for="newUserName">Nama</label>
+        <input
+            type="text"
+            id="newUserName"
+            placeholder="Nama user"
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="newUserEmail">Email</label>
+        <input
+            type="email"
+            id="newUserEmail"
+            placeholder="email@example.com"
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="newUserPassword">Password</label>
+        <input
+            type="password"
+            id="newUserPassword"
+            placeholder="Minimal 6 karakter"
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="newUserPlan">Paket</label>
+
+        <select id="newUserPlan">
+            <option value="free">FREE</option>
+            <option value="pro">PRO</option>
+            <option value="premium">PREMIUM</option>
+        </select>
+    </div>
+
+    <div class="add-user-actions">
+
+        <button id="createUserButton" class="create-user-button">
+            Buat User
+        </button>
+
+        <button id="cancelAddUser">
+            Batal
+        </button>
+
+    </div>
+
+    <div id="addUserMessage"></div>
+
+</div>
 
     <div id="userList">
         <div class="loading-user">
