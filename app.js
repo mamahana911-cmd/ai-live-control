@@ -88,11 +88,13 @@ function hideAdminSections() {
 
 async function loadProfile(user) {
 
-    const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+    const { data, error } =
+        await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
 
     if (error) {
 
@@ -103,6 +105,7 @@ async function loadProfile(user) {
         );
     }
 
+
     if (data.status !== "active") {
 
         await supabaseClient.auth.signOut();
@@ -112,11 +115,46 @@ async function loadProfile(user) {
         );
     }
 
+
+    /*
+     * CEK MASA BERLAKU USER
+     *
+     * Admin tidak terkena pengecekan expired_at.
+     */
+
+    if (
+        data.role === "user" &&
+        data.expired_at
+    ) {
+
+        const expiredAt =
+            new Date(data.expired_at);
+
+        const now =
+            new Date();
+
+
+        if (
+            !isNaN(expiredAt.getTime()) &&
+            expiredAt < now
+        ) {
+
+            await supabaseClient.auth.signOut();
+
+            throw new Error(
+                "Masa berlaku akun Anda telah berakhir. Silakan hubungi Administrator."
+            );
+        }
+    }
+
+
     userName.textContent =
         data.name || "User";
 
+
     userEmail.textContent =
         data.email || user.email;
+
 
     userRole.textContent =
         data.role === "admin"
@@ -126,18 +164,27 @@ async function loadProfile(user) {
 
     if (data.role === "admin") {
 
-        adminPanel.classList.remove("hidden");
+        adminPanel.classList.remove(
+            "hidden"
+        );
 
-        userPanel.classList.add("hidden");
+        userPanel.classList.add(
+            "hidden"
+        );
 
         await loadAdminStats();
 
     } else {
 
-        adminPanel.classList.add("hidden");
+        adminPanel.classList.add(
+            "hidden"
+        );
 
-        userPanel.classList.remove("hidden");
+        userPanel.classList.remove(
+            "hidden"
+        );
     }
+
 
     showDashboard();
 }
