@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>AI LIVE CONTROL</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+    <!-- LOGIN -->
+    <section id="loginPage" class="page">
+        <div class="login-card">
+
+            <div class="logo">
+                <div class="logo-icon">AI</div>
+                <h1>AI LIVE CONTROL</h1>
+                <p>Smart TikTok Live Control System</p>
+            </div>
+
+            <form id="loginForm">
+
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Masukkan email"
+                    required
+                >
+
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Masukkan password"
+                    required
+                >
+
+                <button type="submit" id="loginButton">
+                    LOGIN
+                </button>
+
+                <div id="loginMessage"></div>
+
+            </form>
+
+        </div>
+    </section>
+
+
+    <!-- DASHBOARD -->
+    <section id="dashboardPage" class="page hidden">
+
+        <header class="topbar">
+
+            <div>
+                <h2>AI LIVE CONTROL</h2>
+                <span id="userRole"></span>
+            </div>
+
+            <button id="logoutButton">
+                Logout
+            </button>
+
+        </header>
+
+
+        <main class="dashboard">
+
+            <div class="welcome-card">
+                <span>Selamat datang</span>
+                <h1 id="userName">User</h1>
+                <p id="userEmail"></p>
+            </div>
+
+
+            <!-- ADMIN -->
+            <section id="adminPanel" class="panel hidden">
+
+                <div class="panel-title">
+                    <h2>👑 Admin Dashboard</h2>
+                    <p>Kelola sistem dan pengguna AI LIVE CONTROL</p>
+                </div>
+
+                <div class="stats">
+
+                    <div class="stat-card">
+                        <span>Total User</span>
+                        <strong id="totalUsers">-</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        <span>User Aktif</span>
+                        <strong id="activeUsers">-</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        <span>User Nonaktif</span>
+                        <strong id="inactiveUsers">-</strong>
+                    </div>
+
+                </div>
+
+                <div class="admin-menu">
+
+                    <button>
+                        👥 Kelola User
+                    </button>
+
+                    <button>
+                        💳 Paket & Langganan
+                    </button>
+
+                    <button>
+                        ⚙️ Pengaturan Sistem
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- USER -->
+            <section id="userPanel" class="panel hidden">
+
+                <div class="panel-title">
+                    <h2>🎥 User Dashboard</h2>
+                    <p>Kontrol TikTok Live Anda</p>
+                </div>
+
+                <div class="control-grid">
+
+                    <div class="control-card">
+                        <span>📱</span>
+                        <h3>TikTok Live</h3>
+                        <p>Hubungkan akun TikTok</p>
+                        <button>Connect</button>
+                    </div>
+
+                    <div class="control-card">
+                        <span>🤖</span>
+                        <h3>AI Response</h3>
+                        <p>Atur respons AI otomatis</p>
+                        <button>Open</button>
+                    </div>
+
+                    <div class="control-card">
+                        <span>🔊</span>
+                        <h3>AI Voice</h3>
+                        <p>Text to Speech</p>
+                        <button>Open</button>
+                    </div>
+
+                    <div class="control-card">
+                        <span>🖥️</span>
+                        <h3>OBS Control</h3>
+                        <p>Kontrol OBS Studio</p>
+                        <button>Connect</button>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </section>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>
