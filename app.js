@@ -570,3 +570,220 @@ supabaseClient.auth.onAuthStateChange(
 
 
 checkSession();
+
+
+
+// ===============================
+// TAMBAH USER ADMIN
+// ===============================
+
+const addUserButton =
+    document.getElementById("addUserButton");
+
+const addUserForm =
+    document.getElementById("addUserForm");
+
+const cancelAddUser =
+    document.getElementById("cancelAddUser");
+
+const createUserButton =
+    document.getElementById("createUserButton");
+
+const addUserMessage =
+    document.getElementById("addUserMessage");
+
+
+if (addUserButton) {
+
+    addUserButton.addEventListener(
+        "click",
+        function () {
+
+            addUserForm.classList.remove("hidden");
+
+            addUserMessage.textContent = "";
+
+            document
+                .getElementById("newUserName")
+                .focus();
+
+        }
+    );
+
+}
+
+
+if (cancelAddUser) {
+
+    cancelAddUser.addEventListener(
+        "click",
+        function () {
+
+            addUserForm.classList.add("hidden");
+
+            document
+                .getElementById("newUserName")
+                .value = "";
+
+            document
+                .getElementById("newUserEmail")
+                .value = "";
+
+            document
+                .getElementById("newUserPassword")
+                .value = "";
+
+            document
+                .getElementById("newUserPlan")
+                .value = "free";
+
+            addUserMessage.textContent = "";
+
+        }
+    );
+
+}
+
+
+if (createUserButton) {
+
+    createUserButton.addEventListener(
+        "click",
+        async function () {
+
+            const name =
+                document
+                    .getElementById("newUserName")
+                    .value
+                    .trim();
+
+            const email =
+                document
+                    .getElementById("newUserEmail")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("newUserPassword")
+                    .value;
+
+            const plan =
+                document
+                    .getElementById("newUserPlan")
+                    .value;
+
+
+            if (!email || !password) {
+
+                addUserMessage.textContent =
+                    "Email dan password wajib diisi.";
+
+                return;
+
+            }
+
+
+            if (password.length < 6) {
+
+                addUserMessage.textContent =
+                    "Password minimal 6 karakter.";
+
+                return;
+
+            }
+
+
+            createUserButton.disabled = true;
+
+            createUserButton.textContent =
+                "Membuat User...";
+
+            addUserMessage.textContent =
+                "Sedang membuat akun...";
+
+
+            try {
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient
+                        .functions
+                        .invoke(
+                            "admin-create-user",
+                            {
+                                body: {
+                                    name,
+                                    email,
+                                    password,
+                                    plan
+                                }
+                            }
+                        );
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data || !data.success) {
+
+                    throw new Error(
+                        data?.error ||
+                        "User gagal dibuat."
+                    );
+
+                }
+
+
+                addUserMessage.textContent =
+                    "User berhasil dibuat.";
+
+
+                document
+                    .getElementById("newUserName")
+                    .value = "";
+
+                document
+                    .getElementById("newUserEmail")
+                    .value = "";
+
+                document
+                    .getElementById("newUserPassword")
+                    .value = "";
+
+                document
+                    .getElementById("newUserPlan")
+                    .value = "free";
+
+
+                await loadUsers();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Create user error:",
+                    error
+                );
+
+                addUserMessage.textContent =
+                    error.message ||
+                    "Gagal membuat user.";
+
+            } finally {
+
+                createUserButton.disabled = false;
+
+                createUserButton.textContent =
+                    "Buat User";
+
+            }
+
+        }
+    );
+
+}
