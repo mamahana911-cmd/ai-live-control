@@ -29,16 +29,60 @@ const totalUsers = document.getElementById("totalUsers");
 const activeUsers = document.getElementById("activeUsers");
 const inactiveUsers = document.getElementById("inactiveUsers");
 
+const manageUsersButton =
+    document.getElementById("manageUsersButton");
+
+const plansButton =
+    document.getElementById("plansButton");
+
+const settingsButton =
+    document.getElementById("settingsButton");
+
+const userManagement =
+    document.getElementById("userManagement");
+
+const plansSection =
+    document.getElementById("plansSection");
+
+const settingsSection =
+    document.getElementById("settingsSection");
+
+const closeUserManagement =
+    document.getElementById("closeUserManagement");
+
+const closePlans =
+    document.getElementById("closePlans");
+
+const closeSettings =
+    document.getElementById("closeSettings");
+
+const userList =
+    document.getElementById("userList");
+
 
 function showLogin() {
+
     loginPage.classList.remove("hidden");
+
     dashboardPage.classList.add("hidden");
 }
 
 
 function showDashboard() {
+
     loginPage.classList.add("hidden");
+
     dashboardPage.classList.remove("hidden");
+}
+
+
+function hideAdminSections() {
+
+    userManagement.classList.add("hidden");
+
+    plansSection.classList.add("hidden");
+
+    settingsSection.classList.add("hidden");
 }
 
 
@@ -51,30 +95,47 @@ async function loadProfile(user) {
         .single();
 
     if (error) {
+
         console.error(error);
-        throw new Error("Profile tidak dapat dibaca.");
+
+        throw new Error(
+            "Profile tidak dapat dibaca."
+        );
     }
 
     if (data.status !== "active") {
+
         await supabaseClient.auth.signOut();
-        throw new Error("Akun Anda tidak aktif.");
+
+        throw new Error(
+            "Akun Anda tidak aktif."
+        );
     }
 
-    userName.textContent = data.name || "User";
-    userEmail.textContent = data.email || user.email;
+    userName.textContent =
+        data.name || "User";
+
+    userEmail.textContent =
+        data.email || user.email;
 
     userRole.textContent =
         data.role === "admin"
             ? "Administrator"
             : "User";
 
+
     if (data.role === "admin") {
+
         adminPanel.classList.remove("hidden");
+
         userPanel.classList.add("hidden");
 
         await loadAdminStats();
+
     } else {
+
         adminPanel.classList.add("hidden");
+
         userPanel.classList.remove("hidden");
     }
 
@@ -84,91 +145,381 @@ async function loadProfile(user) {
 
 async function loadAdminStats() {
 
-    const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("role, status");
+    const { data, error } =
+        await supabaseClient
+            .from("profiles")
+            .select("role, status");
 
     if (error) {
+
         console.error(error);
+
         return;
     }
 
-    const users = data.filter(item => item.role === "user");
+    const users =
+        data.filter(
+            item => item.role === "user"
+        );
 
-    const active = users.filter(
-        item => item.status === "active"
-    );
+    const active =
+        users.filter(
+            item => item.status === "active"
+        );
 
-    const inactive = users.filter(
-        item => item.status === "inactive"
-    );
+    const inactive =
+        users.filter(
+            item => item.status === "inactive"
+        );
 
-    totalUsers.textContent = users.length;
-    activeUsers.textContent = active.length;
-    inactiveUsers.textContent = inactive.length;
+    totalUsers.textContent =
+        users.length;
+
+    activeUsers.textContent =
+        active.length;
+
+    inactiveUsers.textContent =
+        inactive.length;
 }
 
 
-loginForm.addEventListener("submit", async function(event) {
+async function loadUsers() {
 
-    event.preventDefault();
+    userList.innerHTML =
+        '<div class="loading-user">Memuat user...</div>';
 
-    const email = document
-        .getElementById("email")
-        .value
-        .trim();
-
-    const password = document
-        .getElementById("password")
-        .value;
-
-    loginButton.disabled = true;
-    loginButton.textContent = "LOGIN...";
-
-    loginMessage.textContent = "";
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-    });
+    const { data, error } =
+        await supabaseClient
+            .from("profiles")
+            .select(
+                "id, email, name, role, status, plan, expired_at"
+            )
+            .eq("role", "user")
+            .order("created_at", {
+                ascending: false
+            });
 
     if (error) {
 
-        loginMessage.textContent = error.message;
+        console.error(error);
 
-        loginButton.disabled = false;
-        loginButton.textContent = "LOGIN";
+        userList.innerHTML =
+            '<div class="loading-user">Gagal memuat user.</div>';
 
         return;
     }
 
-    try {
+    if (!data || data.length === 0) {
 
-        await loadProfile(data.user);
+        userList.innerHTML =
+            '<div class="loading-user">Belum ada user.</div>';
 
-    } catch (error) {
+        return;
+    }
 
-        loginMessage.textContent = error.message;
+
+    userList.innerHTML = "";
+
+
+    data.forEach(user => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "user-item";
+
+
+        const info =
+            document.createElement("div");
+
+        info.className = "user-info";
+
+
+        const name =
+            document.createElement("strong");
+
+        name.textContent =
+            user.name || "User";
+
+
+        const email =
+            document.createElement("span");
+
+        email.textContent =
+            user.email || "-";
+
+
+        const plan =
+            document.createElement("span");
+
+        plan.textContent =
+            "Paket: " + (user.plan || "free");
+
+
+        info.appendChild(name);
+
+        info.appendChild(email);
+
+        info.appendChild(plan);
+
+
+        const actions =
+            document.createElement("div");
+
+        actions.className = "user-actions";
+
+
+        const status =
+            document.createElement("span");
+
+        status.className =
+            "user-status " +
+            (
+                user.status === "active"
+                    ? "status-active"
+                    : "status-inactive"
+            );
+
+        status.textContent =
+            user.status === "active"
+                ? "AKTIF"
+                : "NONAKTIF";
+
+
+        const toggle =
+            document.createElement("button");
+
+        toggle.className =
+            "user-toggle";
+
+        toggle.textContent =
+            user.status === "active"
+                ? "Nonaktifkan"
+                : "Aktifkan";
+
+
+        toggle.addEventListener(
+            "click",
+            () => toggleUserStatus(user)
+        );
+
+
+        actions.appendChild(status);
+
+        actions.appendChild(toggle);
+
+
+        item.appendChild(info);
+
+        item.appendChild(actions);
+
+
+        userList.appendChild(item);
+
+    });
+}
+
+
+async function toggleUserStatus(user) {
+
+    const newStatus =
+        user.status === "active"
+            ? "inactive"
+            : "active";
+
+
+    const { error } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+                status: newStatus,
+                updated_at: new Date().toISOString()
+            })
+            .eq("id", user.id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Gagal mengubah status user."
+        );
+
+        return;
+    }
+
+
+    await loadUsers();
+
+    await loadAdminStats();
+}
+
+
+manageUsersButton.addEventListener(
+    "click",
+    async function() {
+
+        hideAdminSections();
+
+        userManagement.classList.remove(
+            "hidden"
+        );
+
+        await loadUsers();
+    }
+);
+
+
+plansButton.addEventListener(
+    "click",
+    function() {
+
+        hideAdminSections();
+
+        plansSection.classList.remove(
+            "hidden"
+        );
+    }
+);
+
+
+settingsButton.addEventListener(
+    "click",
+    function() {
+
+        hideAdminSections();
+
+        settingsSection.classList.remove(
+            "hidden"
+        );
+    }
+);
+
+
+closeUserManagement.addEventListener(
+    "click",
+    function() {
+
+        userManagement.classList.add(
+            "hidden"
+        );
+    }
+);
+
+
+closePlans.addEventListener(
+    "click",
+    function() {
+
+        plansSection.classList.add(
+            "hidden"
+        );
+    }
+);
+
+
+closeSettings.addEventListener(
+    "click",
+    function() {
+
+        settingsSection.classList.add(
+            "hidden"
+        );
+    }
+);
+
+
+loginForm.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
+
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+            "LOGIN...";
+
+        loginMessage.textContent = "";
+
+
+        const { data, error } =
+            await supabaseClient.auth
+                .signInWithPassword({
+                    email,
+                    password
+                });
+
+
+        if (error) {
+
+            loginMessage.textContent =
+                error.message;
+
+            loginButton.disabled =
+                false;
+
+            loginButton.textContent =
+                "LOGIN";
+
+            return;
+        }
+
+
+        try {
+
+            await loadProfile(
+                data.user
+            );
+
+        } catch (error) {
+
+            loginMessage.textContent =
+                error.message;
+
+            await supabaseClient.auth.signOut();
+        }
+
+
+        loginButton.disabled =
+            false;
+
+        loginButton.textContent =
+            "LOGIN";
+    }
+);
+
+
+logoutButton.addEventListener(
+    "click",
+    async function() {
 
         await supabaseClient.auth.signOut();
 
+        hideAdminSections();
+
+        showLogin();
+
+        loginForm.reset();
+
+        loginMessage.textContent = "";
     }
-
-    loginButton.disabled = false;
-    loginButton.textContent = "LOGIN";
-});
-
-
-logoutButton.addEventListener("click", async function() {
-
-    await supabaseClient.auth.signOut();
-
-    showLogin();
-
-    loginForm.reset();
-
-    loginMessage.textContent = "";
-});
+);
 
 
 async function checkSession() {
@@ -177,16 +528,24 @@ async function checkSession() {
         data: {
             session
         }
-    } = await supabaseClient.auth.getSession();
+    } =
+        await supabaseClient.auth
+            .getSession();
+
 
     if (!session) {
+
         showLogin();
+
         return;
     }
 
+
     try {
 
-        await loadProfile(session.user);
+        await loadProfile(
+            session.user
+        );
 
     } catch (error) {
 
@@ -195,18 +554,17 @@ async function checkSession() {
         await supabaseClient.auth.signOut();
 
         showLogin();
-
     }
 }
 
 
 supabaseClient.auth.onAuthStateChange(
-    async function(event, session) {
+    function(event) {
 
         if (event === "SIGNED_OUT") {
+
             showLogin();
         }
-
     }
 );
 
