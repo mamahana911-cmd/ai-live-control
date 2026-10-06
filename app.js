@@ -1029,7 +1029,7 @@ if (connectTikTokButton) {
                         session
                     },
                     error: sessionError
-                } = await supabase.auth.getSession();
+                } = await supabaseClient.auth.getSession();
 
                 if (
                     sessionError ||
