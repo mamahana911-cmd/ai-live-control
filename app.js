@@ -1006,3 +1006,46 @@ if (createUserButton) {
     );
 
 }
+// ===============================
+// TIKTOK LOGIN KIT
+// ===============================
+
+const connectTikTokButton =
+    document.getElementById("connectTikTokButton");
+
+if (connectTikTokButton) {
+
+    connectTikTokButton.addEventListener(
+        "click",
+        function () {
+
+            const clientKey =
+                "sbawrgz8hh2pevf8ux";
+
+            const redirectUri =
+                "https://alwvrltxdbnzrquchsh.supabase.co/functions/v1/tiktok-oauth";
+
+            const state =
+                crypto.randomUUID();
+
+            sessionStorage.setItem(
+                "tiktok_oauth_state",
+                state
+            );
+
+            const params =
+                new URLSearchParams({
+                    client_key: clientKey,
+                    response_type: "code",
+                    scope: "user.info.basic",
+                    redirect_uri: redirectUri,
+                    state: state
+                });
+
+            window.location.href =
+                "https://www.tiktok.com/v2/auth/authorize/?" +
+                params.toString();
+        }
+    );
+
+}
