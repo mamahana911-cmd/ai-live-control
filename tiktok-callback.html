@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting TikTok...</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .box {
+            width: min(90%, 420px);
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        }
+
+        .loader {
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 20px;
+            border: 4px solid #ddd;
+            border-top-color: #111;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <div class="loader"></div>
+    <h2>Menghubungkan TikTok...</h2>
+    <p>Mohon tunggu, proses autentikasi sedang berlangsung.</p>
+</div>
+
+<script>
+
+const SUPABASE_FUNCTION =
+    "https://alwvrltxdbnzrquchsh.supabase.co/functions/v1/tiktok-oauth";
+
+async function processTikTokCallback() {
+
+    try {
+
+        const params = new URLSearchParams(
+            window.location.search
+        );
+
+        const code =
+            params.get("code");
+
+        const state =
+            params.get("state");
+
+        const error =
+            params.get("error");
+
+        const errorDescription =
+            params.get("error_description");
+
+        if (error) {
+            throw new Error(
+                errorDescription ||
+                error ||
+                "TikTok authorization gagal."
+            );
+        }
+
+        if (!code || !state) {
+            throw new Error(
+                "Authorization code atau state TikTok tidak ditemukan."
+            );
+        }
+
+        const response =
+            await fetch(
+                SUPABASE_FUNCTION,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        code: code,
+                        state: state
+                    })
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.error ||
+                "Gagal menyelesaikan koneksi TikTok."
+            );
+        }
+
+        window.location.href =
+            "https://mamahana911-cmd.github.io/ai-live-control/?tiktok=connected";
+
+    } catch (error) {
+
+        console.error(
+            "TikTok Callback Error:",
+            error
+        );
+
+        document.querySelector(".box").innerHTML = `
+            <h2>Koneksi TikTok Gagal</h2>
+            <p>${error.message}</p>
+            <p>
+                Silakan kembali ke AI LIVE CONTROL
+                dan coba lagi.
+            </p>
+        `;
+    }
+}
+
+processTikTokCallback();
+
+</script>
+
+</body>
+</html>
