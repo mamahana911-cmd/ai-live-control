@@ -1017,34 +1017,85 @@ if (connectTikTokButton) {
 
     connectTikTokButton.addEventListener(
         "click",
-        function () {
+        async function () {
 
-            const clientKey =
-                "sbawrgz8hh2pevf8ux";
+            try {
 
-            const redirectUri =
-                "https://alwvrltxdbnzrquchsh.supabase.co/functions/v1/tiktok-oauth";
+                connectTikTokButton.disabled = true;
+                connectTikTokButton.textContent = "Connecting...";
 
-            const state =
-                crypto.randomUUID();
+                const {
+                    data: {
+                        session
+                    },
+                    error: sessionError
+                } = await supabase.auth.getSession();
 
-            sessionStorage.setItem(
-                "tiktok_oauth_state",
-                state
-            );
+                if (
+                    sessionError ||
+                    !session
+                ) {
+                    alert(
+                        "Sesi login tidak ditemukan. Silakan login kembali."
+                    );
 
-            const params =
-                new URLSearchParams({
-                    client_key: clientKey,
-                    response_type: "code",
-                    scope: "user.info.basic",
-                    redirect_uri: redirectUri,
-                    state: state
-                });
+                    connectTikTokButton.disabled = false;
+                    connectTikTokButton.textContent = "Connect";
 
-            window.location.href =
-                "https://www.tiktok.com/v2/auth/authorize/?" +
-                params.toString();
+                    return;
+                }
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/functions/v1/tiktok-oauth?start=1",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " +
+                                    session.access_token,
+
+                                "apikey":
+                                    SUPABASE_PUBLISHABLE_KEY
+                            }
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !result.authorize_url
+                ) {
+
+                    throw new Error(
+                        result.error ||
+                        "Gagal memulai koneksi TikTok."
+                    );
+                }
+
+                window.location.href =
+                    result.authorize_url;
+
+            } catch (error) {
+
+                console.error(
+                    "TikTok OAuth Error:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Gagal menghubungkan TikTok."
+                );
+
+                connectTikTokButton.disabled = false;
+                connectTikTokButton.textContent = "Connect";
+            }
+
         }
     );
 
