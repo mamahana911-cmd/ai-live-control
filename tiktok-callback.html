@@ -69,9 +69,10 @@ async function processTikTokCallback() {
 
     try {
 
-        const params = new URLSearchParams(
-            window.location.search
-        );
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
 
         const code =
             params.get("code");
@@ -86,6 +87,7 @@ async function processTikTokCallback() {
             params.get("error_description");
 
         if (error) {
+
             throw new Error(
                 errorDescription ||
                 error ||
@@ -94,41 +96,27 @@ async function processTikTokCallback() {
         }
 
         if (!code || !state) {
+
             throw new Error(
                 "Authorization code atau state TikTok tidak ditemukan."
             );
         }
 
-        const response =
-            await fetch(
-                SUPABASE_FUNCTION,
-                {
-                    method: "POST",
+        /*
+         * Kirim code + state ke Edge Function
+         * menggunakan GET karena Edge Function
+         * saat ini menerima GET.
+         */
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        code: code,
-                        state: state
-                    })
-                }
-            );
-
-        const result =
-            await response.json();
-
-        if (!response.ok || !result.success) {
-            throw new Error(
-                result.error ||
-                "Gagal menyelesaikan koneksi TikTok."
-            );
-        }
+        const callbackUrl =
+            SUPABASE_FUNCTION +
+            "?code=" +
+            encodeURIComponent(code) +
+            "&state=" +
+            encodeURIComponent(state);
 
         window.location.href =
-            "https://mamahana911-cmd.github.io/ai-live-control/?tiktok=connected";
+            callbackUrl;
 
     } catch (error) {
 
