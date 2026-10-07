@@ -1007,6 +1007,90 @@ if (createUserButton) {
 
 }
 // ===============================
+// CEK STATUS TIKTOK
+// ===============================
+
+async function loadTikTokStatus() {
+
+    const {
+        data: {
+            session
+        }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/functions/v1/tiktok-oauth?status=1",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " +
+                            session.access_token,
+
+                        "apikey":
+                            SUPABASE_PUBLISHABLE_KEY
+                    }
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !result.connected
+        ) {
+            return;
+        }
+
+        connectTikTokButton.textContent =
+            "✓ TikTok Terhubung";
+
+        connectTikTokButton.disabled =
+            true;
+
+        connectTikTokButton.style.background =
+            "#16803c";
+
+        if (result.connection?.display_name) {
+
+            const card =
+                connectTikTokButton.closest(
+                    ".control-card"
+                );
+
+            if (card) {
+
+                const description =
+                    card.querySelector("p");
+
+                if (description) {
+
+                    description.textContent =
+                        "Terhubung: " +
+                        result.connection.display_name;
+                }
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            "TikTok Status Error:",
+            error
+        );
+    }
+}
+// ===============================
 // TIKTOK LOGIN KIT
 // ===============================
 
@@ -1100,3 +1184,4 @@ if (connectTikTokButton) {
     );
 
 }
+loadTikTokStatus();
